@@ -1,12 +1,9 @@
 //
 //  ContentView.swift
-//  RandomBibleVerseDevotional
+//  Iq-BibleTestApp
 //
-//  Created by Paul Lyons on 2025-05-21
-//  Modified by ChatGPT on 2025-05-22
+//  Created by Paul Lyons on 5/22/25.
 //
-
-import SwiftUI
 
 import SwiftUI
 
@@ -16,40 +13,72 @@ struct ContentView: View {
     @State private var isFirstAppear = true
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                Text("Random Bible Devotional")
-                    .font(.title)
-                    .bold()
-                    .padding(.top)
-
-                if verseVM.isLoading || devoVM.isLoading {
-                    ProgressView()
-                        .padding(.top, 50)
-                } else {
-                    BibleVerseView(verse: verseVM.verse, bookName: verseVM.bookName)
-                    DevotionalView(devotional: devoVM.devotional)
-                }
-
-                if let error = verseVM.errorMessage ?? devoVM.errorMessage {
-                    Text(error)
-                        .foregroundColor(.red)
-                        .multilineTextAlignment(.center)
-                }
-
-                Button(action: refresh) {
-                    Text("Get Another Devotional")
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .disabled(verseVM.isLoading || devoVM.isLoading)
-                .padding(.horizontal)
-                Spacer()
+        VStack {
+            Spacer()
+            if let verse = verseVM.verse {
+                Text("\(verse.b) \(verse.c):\(verse.v)")
+                    .font(.title2)
+                    .foregroundColor(.gray)
+                    .padding(.bottom, 4)
+                Text("\"\(verse.t)\"")
+                    .italic()
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            } else if verseVM.isLoading {
+                ProgressView("Loading verse...")
+            } else {
+                Text("No verse loaded.")
+                    .foregroundColor(.gray)
             }
-            .padding()
+
+            Spacer()
+
+            if let devotional = devoVM.devotional {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(devotional.title)
+                            .font(.title3).bold()
+                        Text(devotional.subtitle)
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                        Text("Reference: \(devotional.reference)")
+                            .font(.subheadline).bold()
+                        Text("Verse: \"\(devotional.verse)\"")
+                            .font(.body).italic()
+                        Text("## Background")
+                            .font(.headline)
+                        Text(devotional.contextualBackground)
+                        Text("## Historical Insights")
+                            .font(.headline)
+                        Text(devotional.historicalInsights)
+                        Text("## Linguistic Insights")
+                            .font(.headline)
+                        Text(devotional.linguisticInsights)
+                        Text("## Modern Relevance")
+                            .font(.headline)
+                        Text(devotional.modernRelevance)
+                        Text("## Reflection Questions")
+                            .font(.headline)
+                        ForEach(devotional.reflectionQuestions, id: \.self) { q in
+                            Text("• \(q)")
+                        }
+                        Text("## Prayer")
+                            .font(.headline)
+                        Text(devotional.prayer).italic()
+                    }
+                    .padding(.horizontal)
+                }
+            } else if let error = devoVM.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+            }
+
+            Button("Get Another Devotional") {
+                refresh()
+            }
+            .buttonStyle(.borderedProminent)
+            .padding(.bottom)
         }
         .onAppear {
             if isFirstAppear {
@@ -59,16 +88,17 @@ struct ContentView: View {
         }
     }
 
-    func refresh() {
+    private func refresh() {
         Task {
+            print("ContentView: Starting refresh()")
             await verseVM.fetchRandomVerse()
+            print("ContentView: Got verse? \(String(describing: verseVM.verse))")
             if let verse = verseVM.verse {
-                await devoVM.generateDevotional(for: verse, bookName: verseVM.bookName)
+                await devoVM.fetchDevotional(for: verse)
+                print("ContentView: Got devotional? \(String(describing: devoVM.devotional))")
+            } else {
+                print("ContentView: No verse to fetch devotional for.")
             }
         }
     }
-}
-
-#Preview {
-    ContentView()
 }

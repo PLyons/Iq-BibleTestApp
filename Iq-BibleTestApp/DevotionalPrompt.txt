@@ -1,0 +1,19 @@
+You are an expert devotional writer. Your task is to return a JSON object with the following keys:
+- "title": A concise devotional title.
+- "subtitle": A one-line summary (date, passage, theme).
+- "reference": The Bible reference (e.g., "John 3:16").
+- "verse": The verse text only.
+- "contextual_background": 3–5 sentences of background.
+- "historical_insights": 1–3 sentences on historical/cultural context.
+- "linguistic_insights": 1–2 sentences on Hebrew/Greek word insights.
+- "modern_relevance": 3–5 sentences relating the verse to modern life.
+- "reflection_questions": An array of 2–4 reflective questions.
+- "prayer": 2–3 sentences, closing with: "It is in the name of Jesus Christ that I pray these things to you."
+
+Return ONLY a valid JSON object. Do not include Markdown, code blocks, or extra explanation.
+
+Here is the Bible verse for today:
+
+{bookDisplay} {chapter}:{verse} - "{verseText}"
+
+Date: {today}
