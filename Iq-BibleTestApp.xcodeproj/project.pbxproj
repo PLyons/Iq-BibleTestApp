@@ -7,13 +7,13 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		DA7B11012DDECB0700316281 /* Iq-BibleTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Iq-BibleTest.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA7B11012DDECB0700316281 /* Iq-BibleTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Iq-BibleTestApp.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DA7B11032DDECB0700316281 /* Iq-BibleTest */ = {
+		DA7B11032DDECB0700316281 /* Iq-BibleTestApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "Iq-BibleTest";
+			path = "Iq-BibleTestApp";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		DA7B10F82DDECB0700316281 = {
 			isa = PBXGroup;
 			children = (
-				DA7B11032DDECB0700316281 /* Iq-BibleTest */,
+				DA7B11032DDECB0700316281 /* Iq-BibleTestApp */,
 				DA7B11022DDECB0700316281 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -40,7 +40,7 @@
 		DA7B11022DDECB0700316281 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DA7B11012DDECB0700316281 /* Iq-BibleTest.app */,
+				DA7B11012DDECB0700316281 /* Iq-BibleTestApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DA7B11002DDECB0700316281 /* Iq-BibleTest */ = {
+		DA7B11002DDECB0700316281 /* Iq-BibleTestApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DA7B110C2DDECB0900316281 /* Build configuration list for PBXNativeTarget "Iq-BibleTest" */;
+			buildConfigurationList = DA7B110C2DDECB0900316281 /* Build configuration list for PBXNativeTarget "Iq-BibleTestApp" */;
 			buildPhases = (
 				DA7B10FD2DDECB0700316281 /* Sources */,
 				DA7B10FE2DDECB0700316281 /* Frameworks */,
@@ -61,13 +61,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DA7B11032DDECB0700316281 /* Iq-BibleTest */,
+				DA7B11032DDECB0700316281 /* Iq-BibleTestApp */,
 			);
-			name = "Iq-BibleTest";
+			name = "Iq-BibleTestApp";
 			packageProductDependencies = (
 			);
 			productName = "Iq-BibleTest";
-			productReference = DA7B11012DDECB0700316281 /* Iq-BibleTest.app */;
+			productReference = DA7B11012DDECB0700316281 /* Iq-BibleTestApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -85,7 +85,7 @@
 					};
 				};
 			};
-			buildConfigurationList = DA7B10FC2DDECB0700316281 /* Build configuration list for PBXProject "Iq-BibleTest" */;
+			buildConfigurationList = DA7B10FC2DDECB0700316281 /* Build configuration list for PBXProject "Iq-BibleTestApp" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -99,7 +99,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DA7B11002DDECB0700316281 /* Iq-BibleTest */,
+				DA7B11002DDECB0700316281 /* Iq-BibleTestApp */,
 			);
 		};
 /* End PBXProject section */
@@ -305,7 +305,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DA7B10FC2DDECB0700316281 /* Build configuration list for PBXProject "Iq-BibleTest" */ = {
+		DA7B10FC2DDECB0700316281 /* Build configuration list for PBXProject "Iq-BibleTestApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DA7B110A2DDECB0900316281 /* Debug */,
@@ -314,7 +314,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DA7B110C2DDECB0900316281 /* Build configuration list for PBXNativeTarget "Iq-BibleTest" */ = {
+		DA7B110C2DDECB0900316281 /* Build configuration list for PBXNativeTarget "Iq-BibleTestApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DA7B110D2DDECB0900316281 /* Debug */,
