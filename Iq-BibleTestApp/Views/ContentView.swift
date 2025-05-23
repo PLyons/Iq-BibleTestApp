@@ -16,7 +16,8 @@ struct ContentView: View {
         VStack {
             Spacer()
             if let verse = verseVM.verse {
-                Text("\(verse.b) \(verse.c):\(verse.v)")
+                // Changed from verse.b to verse.bookName
+                Text("\(verse.bookName) \(verse.c):\(verse.v)")
                     .font(.title2)
                     .foregroundColor(.gray)
                     .padding(.bottom, 4)
