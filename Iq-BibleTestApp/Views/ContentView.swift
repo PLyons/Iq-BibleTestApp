@@ -16,55 +16,17 @@ struct ContentView: View {
         VStack {
             Spacer()
             
-            // Replace the direct verse display with BibleVerseView component
+            // Using the BibleVerseView component
             BibleVerseView(
                 verse: verseVM.verse,
                 isLoading: verseVM.isLoading
             )
             
             Spacer()
-
-            if let devotional = devoVM.devotional {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(devotional.title)
-                            .font(.title3).bold()
-                        Text(devotional.subtitle)
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                        Text("Reference: \(devotional.reference)")
-                            .font(.subheadline).bold()
-                        Text("Verse: \"\(devotional.verse)\"")
-                            .font(.body).italic()
-                        Text("## Background")
-                            .font(.headline)
-                        Text(devotional.contextualBackground)
-                        Text("## Historical Insights")
-                            .font(.headline)
-                        Text(devotional.historicalInsights)
-                        Text("## Linguistic Insights")
-                            .font(.headline)
-                        Text(devotional.linguisticInsights)
-                        Text("## Modern Relevance")
-                            .font(.headline)
-                        Text(devotional.modernRelevance)
-                        Text("## Reflection Questions")
-                            .font(.headline)
-                        ForEach(devotional.reflectionQuestions, id: \.self) { q in
-                            Text("• \(q)")
-                        }
-                        Text("## Prayer")
-                            .font(.headline)
-                        Text(devotional.prayer).italic()
-                    }
-                    .padding(.horizontal)
-                }
-            } else if let error = devoVM.errorMessage {
-                Text(error)
-                    .foregroundColor(.red)
-                    .padding()
-            }
-
+            
+            // Using the DevotionalView component
+            DevotionalView(viewModel: devoVM)
+            
             Button("Get Another Devotional") {
                 refresh()
             }

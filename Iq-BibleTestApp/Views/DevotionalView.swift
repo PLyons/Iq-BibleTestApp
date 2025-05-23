@@ -9,20 +9,60 @@ import SwiftUI
 
 struct DevotionalView: View {
     @ObservedObject var viewModel: DevotionalViewModel
+    @State private var isErrorAlertPresented = false
 
     var body: some View {
         Group {
             if viewModel.isLoading {
-                ProgressView("Generating devotional...")
+                LoadingView(message: "Generating devotional insights...\nThis may take up to 30 seconds")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else if let error = viewModel.errorMessage {
-                Text("Error: \(error)")
-                    .foregroundColor(.red)
+                ErrorView(errorMessage: error) {
+                    // Retry action
+                    if let verse = viewModel.lastProcessedVerse {
+                        Task {
+                            await viewModel.fetchDevotional(for: verse)
+                        }
+                    } else {
+                        isErrorAlertPresented = true
+                    }
+                }
+                .padding()
+                .alert(isPresented: $isErrorAlertPresented) {
+                    Alert(
+                        title: Text("Unable to Retry"),
+                        message: Text("No verse information available for retry. Please get a new verse and try again."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             } else if let devotional = viewModel.devotional {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text(devotional.title)
-                            .font(.title)
-                            .bold()
+                        HStack {
+                            Text(devotional.title)
+                                .font(.title)
+                                .bold()
+                            Spacer()
+                            
+                            // Add cache indicator
+                            if case let .cached(date) = viewModel.cacheStatus {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "clock.arrow.circlepath")
+                                        .foregroundColor(.blue)
+                                    Text("Cached")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(.systemGray6))
+                                )
+                                .help("Cached on \(formatDate(date))")
+                            }
+                        }
+                        
                         Text(devotional.subtitle)
                             .font(.headline)
                             .foregroundColor(.secondary)
@@ -76,13 +116,11 @@ struct DevotionalView: View {
         .navigationTitle("Devotional")
         .navigationBarTitleDisplayMode(.inline)
     }
-}
-
-#if DEBUG
-struct DevotionalView_Previews: PreviewProvider {
-    static var previews: some View {
-        let viewModel = DevotionalViewModel()
-        DevotionalView(viewModel: viewModel)
+    
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
     }
 }
-#endif

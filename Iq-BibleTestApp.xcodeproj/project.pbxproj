@@ -6,7 +6,38 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		DA2BA8622DE0FB2500FD5D0D /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA2BA8612DE0FB2500FD5D0D /* XCTest.framework */; };
+		DA2BA8632DE0FB2500FD5D0D /* XCTest.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DA2BA8612DE0FB2500FD5D0D /* XCTest.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		DA2BA8772DE0FDFC00FD5D0D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DA7B10F92DDECB0700316281 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DA7B11002DDECB0700316281;
+			remoteInfo = "Iq-BibleTestApp";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DA2BA8642DE0FB2500FD5D0D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				DA2BA8632DE0FB2500FD5D0D /* XCTest.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		DA2BA8612DE0FB2500FD5D0D /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		DA2BA8732DE0FDFC00FD5D0D /* Iq-BibleTestAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Iq-BibleTestAppTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA7B11012DDECB0700316281 /* Iq-BibleTestApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Iq-BibleTestApp.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -16,23 +47,46 @@
 			path = "Iq-BibleTestApp";
 			sourceTree = "<group>";
 		};
+		DA2BA8742DE0FDFC00FD5D0D /* Iq-BibleTestAppTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Iq-BibleTestAppTests";
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		DA7B10FE2DDECB0700316281 /* Frameworks */ = {
+		DA2BA8702DE0FDFC00FD5D0D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DA7B10FE2DDECB0700316281 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DA2BA8622DE0FB2500FD5D0D /* XCTest.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DA2BA8602DE0FB2400FD5D0D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DA2BA8612DE0FB2500FD5D0D /* XCTest.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		DA7B10F82DDECB0700316281 = {
 			isa = PBXGroup;
 			children = (
 				DA2BA8272DE0CA2200FD5D0D /* Iq-BibleTestApp */,
+				DA2BA8742DE0FDFC00FD5D0D /* Iq-BibleTestAppTests */,
+				DA2BA8602DE0FB2400FD5D0D /* Frameworks */,
 				DA7B11022DDECB0700316281 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +95,7 @@
 			isa = PBXGroup;
 			children = (
 				DA7B11012DDECB0700316281 /* Iq-BibleTestApp.app */,
+				DA2BA8732DE0FDFC00FD5D0D /* Iq-BibleTestAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +103,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		DA2BA8722DE0FDFC00FD5D0D /* Iq-BibleTestAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DA2BA8792DE0FDFC00FD5D0D /* Build configuration list for PBXNativeTarget "Iq-BibleTestAppTests" */;
+			buildPhases = (
+				DA2BA86F2DE0FDFC00FD5D0D /* Sources */,
+				DA2BA8702DE0FDFC00FD5D0D /* Frameworks */,
+				DA2BA8712DE0FDFC00FD5D0D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DA2BA8782DE0FDFC00FD5D0D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				DA2BA8742DE0FDFC00FD5D0D /* Iq-BibleTestAppTests */,
+			);
+			name = "Iq-BibleTestAppTests";
+			packageProductDependencies = (
+			);
+			productName = "Iq-BibleTestAppTests";
+			productReference = DA2BA8732DE0FDFC00FD5D0D /* Iq-BibleTestAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		DA7B11002DDECB0700316281 /* Iq-BibleTestApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DA7B110C2DDECB0900316281 /* Build configuration list for PBXNativeTarget "Iq-BibleTestApp" */;
@@ -55,6 +133,7 @@
 				DA7B10FD2DDECB0700316281 /* Sources */,
 				DA7B10FE2DDECB0700316281 /* Frameworks */,
 				DA7B10FF2DDECB0700316281 /* Resources */,
+				DA2BA8642DE0FB2500FD5D0D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -80,6 +159,10 @@
 				LastSwiftUpdateCheck = 1630;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
+					DA2BA8722DE0FDFC00FD5D0D = {
+						CreatedOnToolsVersion = 16.3;
+						TestTargetID = DA7B11002DDECB0700316281;
+					};
 					DA7B11002DDECB0700316281 = {
 						CreatedOnToolsVersion = 16.3;
 					};
@@ -100,11 +183,19 @@
 			projectRoot = "";
 			targets = (
 				DA7B11002DDECB0700316281 /* Iq-BibleTestApp */,
+				DA2BA8722DE0FDFC00FD5D0D /* Iq-BibleTestAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		DA2BA8712DE0FDFC00FD5D0D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DA7B10FF2DDECB0700316281 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,6 +206,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DA2BA86F2DE0FDFC00FD5D0D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DA7B10FD2DDECB0700316281 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +222,51 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DA2BA8782DE0FDFC00FD5D0D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DA7B11002DDECB0700316281 /* Iq-BibleTestApp */;
+			targetProxy = DA2BA8772DE0FDFC00FD5D0D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		DA2BA87A2DE0FDFC00FD5D0D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WM8XRAF8TS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "name.paullyons.Iq-BibleTestAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Iq-BibleTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Iq-BibleTestApp";
+			};
+			name = Debug;
+		};
+		DA2BA87B2DE0FDFC00FD5D0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = WM8XRAF8TS;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "name.paullyons.Iq-BibleTestAppTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Iq-BibleTestApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Iq-BibleTestApp";
+			};
+			name = Release;
+		};
 		DA7B110A2DDECB0900316281 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -307,6 +449,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DA2BA8792DE0FDFC00FD5D0D /* Build configuration list for PBXNativeTarget "Iq-BibleTestAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DA2BA87A2DE0FDFC00FD5D0D /* Debug */,
+				DA2BA87B2DE0FDFC00FD5D0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DA7B10FC2DDECB0700316281 /* Build configuration list for PBXProject "Iq-BibleTestApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

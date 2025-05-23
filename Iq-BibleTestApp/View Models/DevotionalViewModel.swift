@@ -12,18 +12,44 @@ class DevotionalViewModel: ObservableObject {
     @Published var devotional: Devotional?
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var cacheStatus: DevotionalCacheManager.CacheStatus = .fresh
     
-    // Get a session with certificate pinning
-    private lazy var secureSession = CertificatePinningManager.shared.createPinnedSession()
+    // Track last processed verse for retry functionality
+    var lastProcessedVerse: BibleVerse?
     
+    private let cacheManager = DevotionalCacheManager.shared
+    
+    // Add secure session with certificate pinning
+    private lazy var secureSession: URLSession = {
+        // Get base secure session
+        let baseSession = CertificatePinningManager.shared.createPinnedSession()
+        
+        // Configure timeouts on the session
+        let config = baseSession.configuration
+        config.timeoutIntervalForRequest = 60.0  // 60 seconds timeout
+        config.timeoutIntervalForResource = 60.0
+        
+        // Create new session with updated configuration
+        return URLSession(configuration: config)
+    }()
+
     func fetchDevotional(for verse: BibleVerse) async {
         isLoading = true
         errorMessage = nil
-
-        // Validate API key first
-        guard let apiKey = APIConfig.shared.groqAPIKey, !apiKey.isEmpty else {
-            errorMessage = "API key is missing or not configured. Please check the app configuration."
-            isLoading = false
+        lastProcessedVerse = verse  // Store for retry functionality
+        cacheStatus = .fresh
+        
+        // Create reference string for caching
+        let reference = "\(verse.bookName) \(verse.c):\(verse.v)"
+        
+        // Check if devotional is in cache
+        if let cachedDevotional = cacheManager.getCachedDevotional(forReference: reference),
+           let cacheTime = cacheManager.getCacheTime(forReference: reference) {
+            // Use cached devotional
+            self.devotional = cachedDevotional
+            self.cacheStatus = .cached(cacheTime)
+            self.isLoading = false
+            print("DevotionalViewModel: Using cached devotional for \(reference)")
             return
         }
 
@@ -37,16 +63,66 @@ class DevotionalViewModel: ObservableObject {
         )
 
         do {
+            print("DevotionalViewModel: Sending request to Groq API...")
             let contentString = try await fetchGroqDevotionalResponse(prompt: prompt)
+            print("DevotionalViewModel: Received content string: \(contentString.prefix(100))...")
+            
             guard let data = contentString.data(using: .utf8) else {
                 throw NSError(domain: "DevotionalViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Groq returned non-UTF8 data."])
             }
-            let devotional = try JSONDecoder().decode(Devotional.self, from: data)
-            self.devotional = devotional
+            
+            // Try to parse as JSON and print any errors
+            do {
+                let devotional = try JSONDecoder().decode(Devotional.self, from: data)
+                self.devotional = devotional
+                print("DevotionalViewModel: Successfully decoded devotional")
+                
+                // Cache the devotional
+                cacheManager.cacheDevotional(devotional, forReference: reference)
+                
+            } catch {
+                print("DevotionalViewModel: JSON decoding error: \(error)")
+                
+                // Try to print the actual content for debugging
+                if let jsonObject = try? JSONSerialization.jsonObject(with: data),
+                   let prettyData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted),
+                   let prettyString = String(data: prettyData, encoding: .utf8) {
+                    print("DevotionalViewModel: Raw JSON content: \(prettyString)")
+                } else {
+                    print("DevotionalViewModel: Raw content (not valid JSON): \(contentString)")
+                }
+                
+                throw error
+            }
         } catch let error as CertificateValidationError {
             // Handle certificate validation errors specifically
+            print("DevotionalViewModel: Certificate validation error: \(error.localizedDescription)")
             self.errorMessage = "Security error: \(error.localizedDescription)"
+        } catch let error as URLError {
+            print("DevotionalViewModel: URLError: \(error.code.rawValue) - \(error.localizedDescription)")
+            if error.code == .cancelled {
+                self.errorMessage = "API request was cancelled. Please check your API key and network connection."
+            } else if error.code == .timedOut {
+                self.errorMessage = "API request timed out. The Groq server might be experiencing high load."
+            } else if error.code == .serverCertificateUntrusted {
+                self.errorMessage = "Security error: Untrusted server certificate."
+            } else if error.code == .notConnectedToInternet {
+                print("DevotionalViewModel: No internet connection, checking cache...")
+                // Final attempt to use cache even if it's expired
+                if let cachedDevotional = cacheManager.getCachedDevotional(forReference: reference),
+                   let cacheTime = cacheManager.getCacheTime(forReference: reference) {
+                    self.devotional = cachedDevotional
+                    self.cacheStatus = .cached(cacheTime)
+                    print("DevotionalViewModel: Using expired cached devotional while offline")
+                } else {
+                    self.errorMessage = "No internet connection and no cached devotional available."
+                }
+            } else {
+                self.errorMessage = "Network error: \(error.localizedDescription)"
+            }
         } catch {
+            print("DevotionalViewModel: Error type: \(type(of: error))")
+            print("DevotionalViewModel: Error generating devotional: \(error.localizedDescription)")
             self.errorMessage = "Failed to generate devotional: \(error.localizedDescription)"
         }
 
@@ -54,8 +130,10 @@ class DevotionalViewModel: ObservableObject {
     }
 
     private func fetchGroqDevotionalResponse(prompt: String) async throws -> String {
-        guard let apiKey = APIConfig.shared.groqAPIKey, !apiKey.isEmpty else {
-            throw NSError(domain: "DevotionalViewModel", code: 3, userInfo: [NSLocalizedDescriptionKey: "Missing Groq API key."])
+        let apiKey = APIConfig.shared.groqAPIKey ?? ""
+        guard !apiKey.isEmpty else {
+            throw NSError(domain: "DevotionalViewModel", code: 3,
+                          userInfo: [NSLocalizedDescriptionKey: "Groq API key is missing."])
         }
         
         guard let url = URL(string: "https://api.groq.com/openai/v1/chat/completions") else {
@@ -68,7 +146,8 @@ class DevotionalViewModel: ObservableObject {
                 ["role": "user", "content": prompt]
             ],
             "temperature": 0.8,
-            "max_tokens": 1000
+            "max_tokens": 1000,
+            "response_format": ["type": "json_object"]
         ]
 
         var request = URLRequest(url: url)
@@ -76,40 +155,57 @@ class DevotionalViewModel: ObservableObject {
         request.addValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        print("DevotionalViewModel: Sending request to \(url.absoluteString)")
+        
+        // Use secure session with pinning and extended timeout
+        let (data, response) = try await secureSession.data(for: request)
+        
+        // Print response details
+        if let httpResponse = response as? HTTPURLResponse {
+            print("DevotionalViewModel: Response status code: \(httpResponse.statusCode)")
+        }
 
-        // Use secure session with certificate pinning instead of URLSession.shared
-        do {
-            let (data, response) = try await secureSession.data(for: request)
+        struct GroqResponse: Decodable {
+            struct Choice: Decodable {
+                struct Message: Decodable {
+                    let content: String
+                }
+                let message: Message
+            }
+            let choices: [Choice]
+            let error: ErrorInfo?
             
-            // Check for authentication errors
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 401 {
-                    throw NSError(domain: "DevotionalViewModel", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid API key or authentication failed."])
-                } else if httpResponse.statusCode != 200 {
-                    throw NSError(domain: "DevotionalViewModel", code: 5, userInfo: [NSLocalizedDescriptionKey: "Server returned error code \(httpResponse.statusCode)."])
-                }
+            struct ErrorInfo: Decodable {
+                let message: String
+                let type: String?
             }
+        }
 
-            struct GroqResponse: Decodable {
-                struct Choice: Decodable {
-                    struct Message: Decodable {
-                        let content: String
-                    }
-                    let message: Message
-                }
-                let choices: [Choice]
-            }
-
+        // Try to decode response or print raw data for debugging
+        do {
             let groq = try JSONDecoder().decode(GroqResponse.self, from: data)
+            
+            if let errorInfo = groq.error {
+                throw NSError(domain: "GroqAPI", code: 4,
+                              userInfo: [NSLocalizedDescriptionKey: "Groq API error: \(errorInfo.message)"])
+            }
+            
             guard let content = groq.choices.first?.message.content else {
-                throw NSError(domain: "DevotionalViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "No content returned from Groq."])
+                throw NSError(domain: "DevotionalViewModel", code: 2,
+                              userInfo: [NSLocalizedDescriptionKey: "No content returned from Groq."])
             }
             return content
-        } catch let error as URLError where error.code == .serverCertificateUntrusted {
-            // Convert URLError to our custom CertificateValidationError
-            throw CertificateValidationError.untrustedCertificate(domain: url.host ?? "unknown")
         } catch {
+            if let responseString = String(data: data, encoding: .utf8) {
+                print("DevotionalViewModel: Raw API response: \(responseString)")
+            }
             throw error
         }
+    }
+    
+    // Add a method to clear cache
+    func clearCache() {
+        cacheManager.clearCache()
     }
 }
