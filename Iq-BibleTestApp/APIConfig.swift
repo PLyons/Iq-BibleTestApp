@@ -4,23 +4,31 @@
 
 import Foundation
 
+/// Configuration class for managing API keys
 class APIConfig {
+    /// Shared instance for app-wide use
     static let shared = APIConfig()
-    private var config: [String: Any] = [:]
-
-    private init() {
-        if let url = Bundle.main.url(forResource: "APIConfig", withExtension: "plist"),
-           let data = try? Data(contentsOf: url),
-           let dict = try? PropertyListSerialization.propertyList(from: data, format: nil) as? [String: Any] {
-            config = dict
-        }
-    }
-
+    
+    /// Private initializer to enforce singleton pattern
+    private init() {}
+    
+    /// Retrieves the Groq API key securely
     var groqAPIKey: String? {
-        config["GROQ_API_KEY"] as? String
+        return SecureConfigManager.shared.getGroqAPIKey()
     }
-
-    var iqBibleAPIKey: String? {
-        config["IQ-BIBLE_API_KEY"] as? String
+    
+    /// Retrieves the Bible API key securely
+    var bibleAPIKey: String? {
+        return SecureConfigManager.shared.getBibleAPIKey()
+    }
+    
+    /// Checks if the Groq API key is properly configured
+    var hasValidGroqAPIKey: Bool {
+        return SecureConfigManager.shared.hasValidGroqAPIKey()
+    }
+    
+    /// Checks if the Bible API key is properly configured
+    var hasValidBibleAPIKey: Bool {
+        return SecureConfigManager.shared.hasValidBibleAPIKey()
     }
 }

@@ -17,6 +17,13 @@ class DevotionalViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
 
+        // Validate API key first
+        guard let apiKey = APIConfig.shared.groqAPIKey, !apiKey.isEmpty else {
+            errorMessage = "API key is missing or not configured. Please check the app configuration."
+            isLoading = false
+            return
+        }
+
         let today = DateFormatter.localizedString(from: Date(), dateStyle: .long, timeStyle: .none)
         let prompt = PromptBuilder.buildPrompt(
             bookDisplay: verse.bookName,
@@ -41,7 +48,10 @@ class DevotionalViewModel: ObservableObject {
     }
 
     private func fetchGroqDevotionalResponse(prompt: String) async throws -> String {
-        let apiKey = APIConfig.shared.groqAPIKey ?? ""
+        guard let apiKey = APIConfig.shared.groqAPIKey, !apiKey.isEmpty else {
+            throw NSError(domain: "DevotionalViewModel", code: 3, userInfo: [NSLocalizedDescriptionKey: "Missing Groq API key."])
+        }
+        
         guard let url = URL(string: "https://api.groq.com/openai/v1/chat/completions") else {
             throw URLError(.badURL)
         }
@@ -61,7 +71,16 @@ class DevotionalViewModel: ObservableObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
 
-        let (data, _) = try await URLSession.shared.data(for: request)
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        // Check for authentication errors
+        if let httpResponse = response as? HTTPURLResponse {
+            if httpResponse.statusCode == 401 {
+                throw NSError(domain: "DevotionalViewModel", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid API key or authentication failed."])
+            } else if httpResponse.statusCode != 200 {
+                throw NSError(domain: "DevotionalViewModel", code: 5, userInfo: [NSLocalizedDescriptionKey: "Server returned error code \(httpResponse.statusCode)."])
+            }
+        }
 
         struct GroqResponse: Decodable {
             struct Choice: Decodable {

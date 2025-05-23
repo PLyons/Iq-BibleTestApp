@@ -25,10 +25,10 @@ class SecureConfigManager {
     
     // MARK: - API Key Access
     
-    /// Retrieves the OpenAI API key with security measures
+    /// Retrieves the Groq API key with security measures
     /// - Returns: The API key or nil if not configured
-    func getOpenAIAPIKey() -> String? {
-        return getSecureValue(forKey: "OpenAIAPIKey")
+    func getGroqAPIKey() -> String? {
+        return getSecureValue(forKey: "GroqAPIKey")
     }
     
     /// Retrieves the Bible API key with security measures
@@ -37,12 +37,11 @@ class SecureConfigManager {
         return getSecureValue(forKey: "BibleAPIKey")
     }
     
-    /// Checks if OpenAI API key is properly configured
+    /// Checks if Groq API key is properly configured
     /// - Returns: Boolean indicating if the key is valid
-    func hasValidOpenAIAPIKey() -> Bool {
-        guard let key = getOpenAIAPIKey() else { return false }
-        // OpenAI keys typically start with "sk-"
-        return !key.isEmpty && key.starts(with: "sk-")
+    func hasValidGroqAPIKey() -> Bool {
+        guard let key = getGroqAPIKey() else { return false }
+        return !key.isEmpty
     }
     
     /// Checks if Bible API key is properly configured
@@ -103,19 +102,5 @@ class SecureConfigManager {
         let cleanValue = reversed.replacingOccurrences(of: "_SECURE_", with: "")
         
         return cleanValue
-    }
-    
-    /// Creates a device-specific factor for additional security
-    /// - Returns: A string derived from device properties
-    private func getDeviceSpecificFactor() -> String {
-        let bundleID = Bundle.main.bundleIdentifier ?? ""
-        let deviceName = UIDevice.current.name
-        let systemVersion = UIDevice.current.systemVersion
-        
-        let combined = bundleID + deviceName + systemVersion + "IqBibleAppSalt"
-        let data = Data(combined.utf8)
-        let hash = SHA256.hash(data: data)
-        
-        return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 }
