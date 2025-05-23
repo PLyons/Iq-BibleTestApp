@@ -15,23 +15,13 @@ struct ContentView: View {
     var body: some View {
         VStack {
             Spacer()
-            if let verse = verseVM.verse {
-                // Changed from verse.b to verse.bookName
-                Text("\(verse.bookName) \(verse.c):\(verse.v)")
-                    .font(.title2)
-                    .foregroundColor(.gray)
-                    .padding(.bottom, 4)
-                Text("\"\(verse.t)\"")
-                    .italic()
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-            } else if verseVM.isLoading {
-                ProgressView("Loading verse...")
-            } else {
-                Text("No verse loaded.")
-                    .foregroundColor(.gray)
-            }
-
+            
+            // Replace the direct verse display with BibleVerseView component
+            BibleVerseView(
+                verse: verseVM.verse,
+                isLoading: verseVM.isLoading
+            )
+            
             Spacer()
 
             if let devotional = devoVM.devotional {
