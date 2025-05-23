@@ -12,7 +12,10 @@ class DevotionalViewModel: ObservableObject {
     @Published var devotional: Devotional?
     @Published var isLoading = false
     @Published var errorMessage: String?
-
+    
+    // Get a session with certificate pinning
+    private lazy var secureSession = CertificatePinningManager.shared.createPinnedSession()
+    
     func fetchDevotional(for verse: BibleVerse) async {
         isLoading = true
         errorMessage = nil
@@ -40,6 +43,9 @@ class DevotionalViewModel: ObservableObject {
             }
             let devotional = try JSONDecoder().decode(Devotional.self, from: data)
             self.devotional = devotional
+        } catch let error as CertificateValidationError {
+            // Handle certificate validation errors specifically
+            self.errorMessage = "Security error: \(error.localizedDescription)"
         } catch {
             self.errorMessage = "Failed to generate devotional: \(error.localizedDescription)"
         }
@@ -71,31 +77,39 @@ class DevotionalViewModel: ObservableObject {
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        // Check for authentication errors
-        if let httpResponse = response as? HTTPURLResponse {
-            if httpResponse.statusCode == 401 {
-                throw NSError(domain: "DevotionalViewModel", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid API key or authentication failed."])
-            } else if httpResponse.statusCode != 200 {
-                throw NSError(domain: "DevotionalViewModel", code: 5, userInfo: [NSLocalizedDescriptionKey: "Server returned error code \(httpResponse.statusCode)."])
-            }
-        }
-
-        struct GroqResponse: Decodable {
-            struct Choice: Decodable {
-                struct Message: Decodable {
-                    let content: String
+        // Use secure session with certificate pinning instead of URLSession.shared
+        do {
+            let (data, response) = try await secureSession.data(for: request)
+            
+            // Check for authentication errors
+            if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 401 {
+                    throw NSError(domain: "DevotionalViewModel", code: 4, userInfo: [NSLocalizedDescriptionKey: "Invalid API key or authentication failed."])
+                } else if httpResponse.statusCode != 200 {
+                    throw NSError(domain: "DevotionalViewModel", code: 5, userInfo: [NSLocalizedDescriptionKey: "Server returned error code \(httpResponse.statusCode)."])
                 }
-                let message: Message
             }
-            let choices: [Choice]
-        }
 
-        let groq = try JSONDecoder().decode(GroqResponse.self, from: data)
-        guard let content = groq.choices.first?.message.content else {
-            throw NSError(domain: "DevotionalViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "No content returned from Groq."])
+            struct GroqResponse: Decodable {
+                struct Choice: Decodable {
+                    struct Message: Decodable {
+                        let content: String
+                    }
+                    let message: Message
+                }
+                let choices: [Choice]
+            }
+
+            let groq = try JSONDecoder().decode(GroqResponse.self, from: data)
+            guard let content = groq.choices.first?.message.content else {
+                throw NSError(domain: "DevotionalViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "No content returned from Groq."])
+            }
+            return content
+        } catch let error as URLError where error.code == .serverCertificateUntrusted {
+            // Convert URLError to our custom CertificateValidationError
+            throw CertificateValidationError.untrustedCertificate(domain: url.host ?? "unknown")
+        } catch {
+            throw error
         }
-        return content
     }
 }

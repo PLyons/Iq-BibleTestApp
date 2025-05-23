@@ -11,7 +11,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		DA7B11032DDECB0700316281 /* Iq-BibleTestApp */ = {
+		DA2BA8272DE0CA2200FD5D0D /* Iq-BibleTestApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Iq-BibleTestApp";
 			sourceTree = "<group>";
@@ -32,7 +32,7 @@
 		DA7B10F82DDECB0700316281 = {
 			isa = PBXGroup;
 			children = (
-				DA7B11032DDECB0700316281 /* Iq-BibleTestApp */,
+				DA2BA8272DE0CA2200FD5D0D /* Iq-BibleTestApp */,
 				DA7B11022DDECB0700316281 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				DA7B11032DDECB0700316281 /* Iq-BibleTestApp */,
+				DA2BA8272DE0CA2200FD5D0D /* Iq-BibleTestApp */,
 			);
 			name = "Iq-BibleTestApp";
 			packageProductDependencies = (
@@ -269,6 +269,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "name.paullyons.Iq-BibleTest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Iq-BibleTestApp/SupportingFiles/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -297,6 +298,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "name.paullyons.Iq-BibleTest";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Iq-BibleTestApp/SupportingFiles/Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
