@@ -1,6 +1,9 @@
 # Exclude API configuration
 ApiConfig.plist
 
+# API Keys
+Iq-BibleTestApp/Keys.md
+
 # Xcode
 #
 build/
