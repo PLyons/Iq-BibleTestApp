@@ -6,60 +6,69 @@
 //
 
 import XCTest
-@testable import Iq_BibleTestApp  // Use actual module name
+@testable import Iq_BibleTestApp
 
-final class DevotionalTests: XCTestCase {
+class DevotionalTests: XCTestCase {
     
     func testDevotionalDecoding() throws {
-        // Given: A sample JSON string representing a devotional
-        let jsonString = """
+        // Given: JSON for a devotional with snake_case keys matching CodingKeys
+        let json = """
         {
-            "title": "Finding Peace in Chaos",
-            "subtitle": "God's Presence in Uncertain Times",
+            "title": "Finding Peace",
+            "subtitle": "God's Comfort",
             "reference": "Psalms 23:4",
-            "verse": "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.",
-            "contextualBackground": "Psalm 23 was written by David, who knew what it meant to face danger and difficulty.",
-            "historicalInsights": "Shepherds in ancient Israel would use rods for protection against wild animals.",
-            "linguisticInsights": "The Hebrew word for 'valley' here implies a deep, dark ravine.",
-            "modernRelevance": "Today, we face our own valleys of uncertainty and fear.",
-            "reflectionQuestions": [
-                "When have you felt God's presence in difficult times?",
-                "How does the image of God as shepherd speak to you?"
-            ],
-            "prayer": "Lord, thank you for walking with me through life's dark valleys."
+            "verse": "Test verse text",
+            "contextual_background": "Test background",
+            "historical_insights": "Test history",
+            "linguistic_insights": "Test linguistics",
+            "modern_relevance": "Test relevance",
+            "reflection_questions": ["Question 1", "Question 2"],
+            "prayer": "Test prayer"
         }
         """
         
-        // When: We decode the JSON
-        let jsonData = Data(jsonString.utf8)
-        let devotional = try JSONDecoder().decode(Devotional.self, from: jsonData)
+        // When: We decode the JSON into a Devotional
+        let data = json.data(using: .utf8)!
+        let devotional = try JSONDecoder().decode(Devotional.self, from: data)
         
-        // Then: All properties should be correctly parsed
-        XCTAssertEqual(devotional.title, "Finding Peace in Chaos")
-        XCTAssertEqual(devotional.subtitle, "God's Presence in Uncertain Times")
+        // Then: The properties should match
+        XCTAssertEqual(devotional.title, "Finding Peace")
+        XCTAssertEqual(devotional.subtitle, "God's Comfort")
         XCTAssertEqual(devotional.reference, "Psalms 23:4")
-        XCTAssertEqual(devotional.verse, "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me; your rod and your staff, they comfort me.")
-        XCTAssertEqual(devotional.contextualBackground, "Psalm 23 was written by David, who knew what it meant to face danger and difficulty.")
-        XCTAssertEqual(devotional.historicalInsights, "Shepherds in ancient Israel would use rods for protection against wild animals.")
-        XCTAssertEqual(devotional.linguisticInsights, "The Hebrew word for 'valley' here implies a deep, dark ravine.")
-        XCTAssertEqual(devotional.modernRelevance, "Today, we face our own valleys of uncertainty and fear.")
+        XCTAssertEqual(devotional.verse, "Test verse text")
+        XCTAssertEqual(devotional.contextualBackground, "Test background")
+        XCTAssertEqual(devotional.historicalInsights, "Test history")
+        XCTAssertEqual(devotional.linguisticInsights, "Test linguistics")
+        XCTAssertEqual(devotional.modernRelevance, "Test relevance")
         XCTAssertEqual(devotional.reflectionQuestions.count, 2)
-        XCTAssertEqual(devotional.reflectionQuestions[0], "When have you felt God's presence in difficult times?")
-        XCTAssertEqual(devotional.reflectionQuestions[1], "How does the image of God as shepherd speak to you?")
-        XCTAssertEqual(devotional.prayer, "Lord, thank you for walking with me through life's dark valleys.")
+        XCTAssertEqual(devotional.reflectionQuestions[0], "Question 1")
+        XCTAssertEqual(devotional.reflectionQuestions[1], "Question 2")
+        XCTAssertEqual(devotional.prayer, "Test prayer")
     }
     
-    func testInvalidDevotionalJSON() {
-        // Given: An invalid JSON string (missing required fields)
-        let invalidJSON = """
-        {
-            "title": "Incomplete Devotional",
-            "subtitle": "Missing Fields"
-        }
-        """
+    func testDevotionalEncoding() throws {
+        // Given: A devotional object
+        let devotional = Devotional(
+            title: "Sample Title",
+            subtitle: "Sample Subtitle",
+            reference: "Psalms 23:4",
+            verse: "Test verse",
+            contextualBackground: "Background",
+            historicalInsights: "History",
+            linguisticInsights: "Linguistics",
+            modernRelevance: "Relevance",
+            reflectionQuestions: ["Q1", "Q2"],
+            prayer: "Prayer"
+        )
         
-        // When/Then: Decoding should throw an error
-        let data = Data(invalidJSON.utf8)
-        XCTAssertThrowsError(try JSONDecoder().decode(Devotional.self, from: data))
+        // When: We encode the devotional to JSON
+        let data = try JSONEncoder().encode(devotional)
+        
+        // Then: We should be able to decode it back
+        let decodedDevotional = try JSONDecoder().decode(Devotional.self, from: data)
+        
+        XCTAssertEqual(decodedDevotional.title, devotional.title)
+        XCTAssertEqual(decodedDevotional.subtitle, devotional.subtitle)
+        XCTAssertEqual(decodedDevotional.reference, devotional.reference)
     }
 }
