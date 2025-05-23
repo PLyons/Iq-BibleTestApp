@@ -14,12 +14,14 @@ struct BibleVerseView: View {
     var body: some View {
         if let verse = verse {
             VStack(spacing: 8) {
-                if let bookName = bookName {
-                    Text("**\(bookName) \(verse.c):\(verse.v)**")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
+                // Use provided bookName if available, otherwise use verse.bookName
+                let displayName = bookName ?? verse.bookName
+                
+                Text("**\(displayName) \(verse.c):\(verse.v)**")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                
                 Text("\"\(verse.t)\"")
                     .font(.title2)
                     .italic()

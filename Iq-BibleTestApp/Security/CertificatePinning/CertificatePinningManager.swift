@@ -17,12 +17,12 @@ class CertificatePinningManager: NSObject {
     private let serverTrustDict: [String: [String]] = [
         // RapidAPI/Bible API certificate
         "iq-bible.p.rapidapi.com": [
-            // You'll replace this with the actual hash from Terminal
-            "imX31PK2ta8G7CY/GUYdW+U2dhWt/g8ynTWd9d+tnOs="
+            // Updated hash from console output
+            "/jqQrPpgtAwiaBNMnI5aDNy2M7ZPaOIXaa1m12JEcQM="
         ],
         // Groq API certificate
         "api.groq.com": [
-            // You'll replace this with the actual hash from Terminal
+            // Keep this as is if no error for Groq API
             "xCO7RP5QxGzjtGdK9yEXhncp+UqajCBIirVzml0rQ/M="
         ]
     ]

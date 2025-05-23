@@ -10,10 +10,10 @@ import Foundation
 // MARK: - BibleVerse (Individual Verse)
 struct BibleVerse: Codable, Identifiable, Equatable {
     var id: String { "\(b)-\(c)-\(v)" }
-    let b: String       // Book *name* or ordinal as string (API may give number, see note below)
-    let c: Int
-    let v: Int
-    let t: String
+    let b: String       // Book *name* or ordinal as string
+    let c: String       // Chapter as string (changed from Int to match API response)
+    let v: String       // Verse as string (changed from Int to match API response)
+    let t: String       // Text of the verse
 
     // If your API sometimes returns book as an ordinal (number as string), map it:
     static let bookNames = [
@@ -33,5 +33,14 @@ struct BibleVerse: Codable, Identifiable, Equatable {
             return BibleVerse.bookNames[ordinal - 1]
         }
         return b
+    }
+    
+    // Convenience properties to get integer values when needed
+    var chapterNumber: Int {
+        return Int(c) ?? 0
+    }
+    
+    var verseNumber: Int {
+        return Int(v) ?? 0
     }
 }
